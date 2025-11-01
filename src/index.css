@@ -1,0 +1,23 @@
+:root{
+  --bg: #f6f8fa;
+  --card: #fff;
+  --accent: #0f62fe;
+  --text: #0b1220;
+}
+
+*{box-sizing:border-box}
+html,body,#root{height:100%;}
+body{
+  margin:0;
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  background:var(--bg);
+  color:var(--text);
+}
+
+.app{max-width:980px;margin:24px auto;padding:16px}
+.app-header h1{margin:0 0 4px}
+.problems{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.problem-card{background:var(--card);padding:16px;border-radius:8px;box-shadow:0 1px 4px rgba(12,15,20,0.06)}
+.answer-form textarea{width:100%;padding:8px;margin-top:8px;border-radius:6px;border:1px solid #ddd}
+.answer-form button{margin-top:8px;padding:8px 12px;background:var(--accent);color:#fff;border:none;border-radius:6px}
+.submission-result pre{background:#f4f6f8;padding:8px;border-radius:6px;overflow:auto}
