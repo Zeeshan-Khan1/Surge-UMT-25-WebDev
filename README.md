@@ -2,6 +2,11 @@
 
 CampusConnect is a talent discovery platform built for the Surge '25 Web Hackathon. It connects students through opportunities for part-time work, startup gigs, academic projects, competitions, and collaborations.
 
+### Important
+Try Demo: Click Login → Select a role → Use password: demo123
+This is also mentioned on the landing page just for Information
+
+
 ## Features
 
 ### 🎯 Core Features
