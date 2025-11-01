@@ -80,6 +80,10 @@ npm run dev
 
 4. Open your browser and navigate to the URL shown in the terminal (usually `http://localhost:5173`)
 
+### SnapShot Of The Project:
+https://drive.google.com/file/d/1jySpIVPryGoXgWmRXocS9R6f0i_p3akM/view?usp=sharing
+   
+
 ## Project Structure
 
 ```
