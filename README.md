@@ -116,7 +116,7 @@ SETUP_NOTES.md                      # Setup or usage notes
 vite.config.js                      # Vite configuration file
 extract-pdf.js                      # Utility script (for PDF handling)
 
-
+```
 ## Key Features Implementation
 
 ### Match Score Algorithm
