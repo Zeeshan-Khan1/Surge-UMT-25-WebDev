@@ -230,15 +230,16 @@ class Database {
   getMessages(filters = {}) {
     let messages = JSON.parse(localStorage.getItem('messages') || '[]')
     
-    if (filters.userId) {
-      messages = messages.filter(m => 
-        m.fromId === filters.userId || m.toId === filters.userId
-      )
-    }
-    if (filters.otherUserId) {
+    if (filters.userId && filters.otherUserId) {
+      // Filter for messages between two specific users
       messages = messages.filter(m => 
         (m.fromId === filters.userId && m.toId === filters.otherUserId) ||
         (m.fromId === filters.otherUserId && m.toId === filters.userId)
+      )
+    } else if (filters.userId) {
+      // Filter for all messages involving this user
+      messages = messages.filter(m => 
+        m.fromId === filters.userId || m.toId === filters.userId
       )
     }
 
@@ -301,7 +302,142 @@ class Database {
   generateId() {
     return Date.now().toString(36) + Math.random().toString(36).substr(2)
   }
+
+  // Seed demo data
+  seedDemoData() {
+    // Only seed if no users exist
+    if (this.getUsers().length > 0) {
+      return
+    }
+
+    // Create demo users
+    const demoUsers = [
+      {
+        email: 'student@university.edu',
+        password: 'demo123',
+        name: 'Alex Johnson',
+        skills: ['React', 'JavaScript', 'Node.js', 'Python', 'Web Development'],
+        bio: 'Computer Science student passionate about web development and looking for exciting opportunities.',
+        experienceLevel: 'intermediate',
+        interests: ['Web Development', 'Startups', 'Open Source', 'Machine Learning']
+      },
+      {
+        email: 'recruiter@startup.com',
+        password: 'demo123',
+        name: 'Sarah Chen',
+        skills: ['Product Management', 'Team Leadership', 'Hiring'],
+        bio: 'Startup founder looking for talented students to join our team.',
+        experienceLevel: 'expert',
+        interests: ['Startups', 'Innovation', 'Tech', 'Product Development']
+      },
+      {
+        email: 'professor@university.edu',
+        password: 'demo123',
+        name: 'Dr. Michael Brown',
+        skills: ['Research', 'Machine Learning', 'Data Science'],
+        bio: 'University professor seeking students for research projects.',
+        experienceLevel: 'expert',
+        interests: ['Research', 'Academic Projects', 'AI', 'Data Science']
+      }
+    ]
+
+    const createdUsers = []
+    demoUsers.forEach(userData => {
+      try {
+        const user = this.createUser(
+          userData.email,
+          userData.password,
+          userData.name,
+          userData.skills,
+          userData.bio
+        )
+        // Update with additional fields
+        this.updateUser(user.id, {
+          experienceLevel: userData.experienceLevel,
+          interests: userData.interests
+        })
+        createdUsers.push({ ...user, ...userData })
+      } catch (e) {
+        // User might already exist
+      }
+    })
+
+    // Create demo jobs if recruiter user exists
+    const recruiter = createdUsers.find(u => u.email === 'recruiter@startup.com') || 
+                      this.getUsers().find(u => u.email === 'recruiter@startup.com')
+    
+    if (recruiter && this.getJobs().length === 0) {
+      const demoJobs = [
+        {
+          title: 'Frontend Developer Intern',
+          description: 'Join our startup as a Frontend Developer Intern! Work on cutting-edge web applications using React and modern JavaScript. Perfect opportunity for students passionate about web development. You\'ll work closely with our senior developers and gain real-world experience.',
+          type: 'startup-collaborations',
+          tags: ['React', 'JavaScript', 'Web Development', 'Startups', 'Remote'],
+          requiredSkills: ['React', 'JavaScript', 'CSS', 'HTML'],
+          experienceLevel: 'intermediate',
+          location: 'Remote',
+          budget: '$500/month + Equity',
+          status: 'active'
+        },
+        {
+          title: 'Machine Learning Research Assistant',
+          description: 'Looking for motivated students to assist with ongoing ML research projects. You\'ll work on data preprocessing, model training, and paper writing. Great opportunity for students interested in AI and research.',
+          type: 'academic-projects',
+          tags: ['Machine Learning', 'Python', 'Research', 'AI', 'Data Science'],
+          requiredSkills: ['Python', 'Machine Learning', 'Data Analysis', 'Research'],
+          experienceLevel: 'intermediate',
+          location: 'On-campus',
+          budget: 'Stipend Available',
+          status: 'active'
+        },
+        {
+          title: 'Full-Stack Developer for Hackathon Team',
+          description: 'Forming a team for an upcoming hackathon! Looking for a full-stack developer who can build both frontend and backend. We need someone with experience in React and Node.js. Let\'s build something amazing together!',
+          type: 'competitions-hackathons',
+          tags: ['React', 'Node.js', 'Full-Stack', 'Hackathon', 'Team'],
+          requiredSkills: ['React', 'Node.js', 'MongoDB', 'JavaScript'],
+          experienceLevel: 'advanced',
+          location: 'Remote',
+          budget: 'Prize Sharing',
+          status: 'active'
+        },
+        {
+          title: 'Part-time UI/UX Designer',
+          description: 'Small startup looking for a part-time UI/UX designer to help improve our product interface. Work 10-15 hours per week. Flexible schedule perfect for students. Portfolio required.',
+          type: 'part-time-jobs',
+          tags: ['UI/UX', 'Design', 'Figma', 'Creative', 'Part-time'],
+          requiredSkills: ['Figma', 'UI Design', 'UX Design', 'Prototyping'],
+          experienceLevel: 'intermediate',
+          location: 'Hybrid',
+          budget: '$20/hour',
+          status: 'active'
+        },
+        {
+          title: 'Backend Developer Needed for Project',
+          description: 'Looking for a backend developer to help build our API and database architecture. Must be comfortable with Node.js, Express, and databases. This is a paid project opportunity.',
+          type: 'startup-collaborations',
+          tags: ['Node.js', 'Backend', 'API', 'Database', 'Express'],
+          requiredSkills: ['Node.js', 'Express', 'MongoDB', 'REST API'],
+          experienceLevel: 'intermediate',
+          location: 'Remote',
+          budget: '$800/project',
+          status: 'active'
+        }
+      ]
+
+      demoJobs.forEach(jobData => {
+        this.createJob(recruiter.id, jobData)
+      })
+    }
+
+    return createdUsers
+  }
 }
 
 export const db = new Database()
+
+// Seed demo data on import
+if (typeof window !== 'undefined') {
+  db.seedDemoData()
+}
 

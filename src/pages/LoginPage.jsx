@@ -1,16 +1,47 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import { Mail, Lock } from 'lucide-react'
+import { Mail, Lock, User, Briefcase, GraduationCap } from 'lucide-react'
 import './AuthPage.css'
 
+const roleConfig = {
+  student: {
+    email: 'student@university.edu',
+    title: 'Student / Talent Seeker',
+    icon: User,
+    gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+  },
+  recruiter: {
+    email: 'recruiter@startup.com',
+    title: 'Recruiter / Talent Finder',
+    icon: Briefcase,
+    gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
+  },
+  professor: {
+    email: 'professor@university.edu',
+    title: 'Professor / Researcher',
+    icon: GraduationCap,
+    gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
+  }
+}
+
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
+  const [searchParams] = useSearchParams()
+  const roleParam = searchParams.get('role')
+  const selectedRole = roleConfig[roleParam] || null
+  
+  const [email, setEmail] = useState(selectedRole?.email || '')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const { login } = useAuth()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (selectedRole) {
+      setEmail(selectedRole.email)
+    }
+  }, [selectedRole])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -20,7 +51,39 @@ export default function LoginPage() {
     try {
       const result = await login(email, password)
       if (result.success) {
-        navigate('/seeker')
+        // Navigate based on user type
+        if (email === 'recruiter@startup.com') {
+          localStorage.setItem('currentRole', 'finder')
+          navigate('/finder')
+        } else {
+          navigate('/seeker')
+        }
+      } else {
+        setError(result.error || 'Failed to login')
+      }
+    } catch (err) {
+      setError('An error occurred. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleDemoLogin = async (demoEmail, demoPassword) => {
+    setEmail(demoEmail)
+    setPassword(demoPassword)
+    setError('')
+    setLoading(true)
+
+    try {
+      const result = await login(demoEmail, demoPassword)
+      if (result.success) {
+        // Navigate based on user type
+        if (demoEmail === 'recruiter@startup.com') {
+          localStorage.setItem('currentRole', 'finder')
+          navigate('/finder')
+        } else {
+          navigate('/seeker')
+        }
       } else {
         setError(result.error || 'Failed to login')
       }
@@ -36,8 +99,24 @@ export default function LoginPage() {
       <div className="auth-container">
         <div className="auth-header">
           <h1>CampusConnect</h1>
-          <h2>Welcome Back</h2>
-          <p>Sign in to your account</p>
+          {selectedRole ? (
+            <>
+              <div className="role-badge" style={{ '--gradient': selectedRole.gradient }}>
+                {selectedRole.icon && React.createElement(selectedRole.icon, { size: 20 })}
+                <span>{selectedRole.title}</span>
+              </div>
+              <h2>Welcome Back</h2>
+              <p>Sign in to your account</p>
+              <p style={{ fontSize: '0.85rem', color: '#666', marginTop: '0.5rem' }}>
+                💡 Demo password: <code>demo123</code>
+              </p>
+            </>
+          ) : (
+            <>
+              <h2>Welcome Back</h2>
+              <p>Sign in to your account</p>
+            </>
+          )}
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form">
@@ -82,6 +161,38 @@ export default function LoginPage() {
           <button type="submit" className="btn-primary btn-full" disabled={loading}>
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
+
+          <div className="demo-login-section">
+            <div className="divider">
+              <span>Or try demo accounts</span>
+            </div>
+            <div className="demo-buttons">
+              <button 
+                type="button" 
+                className="demo-btn student"
+                onClick={() => handleDemoLogin('student@university.edu', 'demo123')}
+                disabled={loading}
+              >
+                👨‍🎓 Login as Student
+              </button>
+              <button 
+                type="button" 
+                className="demo-btn recruiter"
+                onClick={() => handleDemoLogin('recruiter@startup.com', 'demo123')}
+                disabled={loading}
+              >
+                💼 Login as Recruiter
+              </button>
+              <button 
+                type="button" 
+                className="demo-btn professor"
+                onClick={() => handleDemoLogin('professor@university.edu', 'demo123')}
+                disabled={loading}
+              >
+                🎓 Login as Professor
+              </button>
+            </div>
+          </div>
 
           <div className="oauth-section">
             <div className="divider">
