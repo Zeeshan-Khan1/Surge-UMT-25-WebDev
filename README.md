@@ -64,7 +64,7 @@ CampusConnect is a talent discovery platform built for the Surge '25 Web Hackath
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/Zeeshan-Khan1/Surge-UMT-25-WebDev.git
 cd SURGE_2025_Compe
 ```
 
