@@ -179,5 +179,8 @@ The built files will be in the `dist/` directory.
 This project was created for the Surge '25 Web Hackathon.
 
 ## Contributors
+- Zeeshan khan
+- Aiza Dawood
+- Ethisham Tasaquq
 
 Built for Surge '25 Web Hackathon competition.
