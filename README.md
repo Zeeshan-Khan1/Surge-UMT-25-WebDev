@@ -9,7 +9,6 @@ https://umt-connect.netlify.app/
 ### Try Demo: Click Login → Select a role → Use password: demo123
 This is also mentioned on the landing page just for Information
 
-
 ## Features
 
 ### 🎯 Core Features
